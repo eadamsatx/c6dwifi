@@ -519,6 +519,13 @@ class Canon6DConnector(Common):
         zeroconf = Zeroconf()
         listener = self
         browser = ServiceBrowser(zeroconf, "_ptp._tcp.local.", listener)
+        browser = ServiceBrowser(zeroconf, "_http._tcp.local.", listener)
+        browser = ServiceBrowser(zeroconf, "_dlna._tcp.local.", listener)
+        browser = ServiceBrowser(zeroconf, "_daap._tcp.local.", listener)
+        browser = ServiceBrowser(zeroconf, "_dacp._tcp.local.", listener)
+        browser = ServiceBrowser(zeroconf, "_touch-able._tcp.local.", listener)
+        browser = ServiceBrowser(zeroconf, "_rsp._tcp.local.", listener)
+        browser = ServiceBrowser(zeroconf, "_rsp._tcp.local.", listener)
 
         try:
             input("Press enter to exit...\n\n")
@@ -539,10 +546,13 @@ class Canon6DConnector(Common):
         info = zeroconf.get_service_info(type, name)
         print("Service %s added, service info: %s" % (name, info))
         if info is not None:
-            guid = info.properties[b'sid.canon.com'].decode()
-            ip = socket.inet_ntoa(info.address)
+            try:
+                guid = info.properties[b'sid.canon.com'].decode()
+                ip = socket.inet_ntoa(info.address)
+                self.connect(ip, guid)
+            except:
+                logger.error('not a canon')
 
-            self.connect(ip, guid)
 
 def test_callback(camera):
     print('camera_main', camera.guid)
